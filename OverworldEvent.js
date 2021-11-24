@@ -17,7 +17,7 @@ class OverworldEvent {
       direction: this.event.direction
     });
 
-    document.addEventListener()
+    document.addEventListener("PersonWalkingComplete", completeHandler)
   }
 
   init() {

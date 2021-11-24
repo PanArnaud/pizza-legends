@@ -17,24 +17,24 @@ class Person extends GameObject {
     if (this.movingProgressRemaining > 0) {
       this.updatePosition();
     } else {
-
-    }
-    this.updateSprite(state);
-
-    if (this.isPlayerControlled && this.movingProgressRemaining === 0 && state.arrow) {
-      this.startBehaviour(state, {
-        type: "walk",
-        direction: state.arrow
-      });
+      // More cases
+      if (this.isPlayerControlled && state.arrow) {
+        this.startBehaviour(state, {
+          type: "walk",
+          direction: state.arrow
+        });
+      }
+      this.updateSprite(state);
     }
   }
 
   startBehaviour(state, behaviour) {
     this.direction = behaviour.direction;
-    if (this.behaviour.type === 'walk') {
+    if (behaviour.type === 'walk') {
       if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
         return;
       }
+      state.map.moveWall(this.x, this.y, this.direction);
       this.movingProgressRemaining = 16;
     }
   }
@@ -45,14 +45,11 @@ class Person extends GameObject {
     this.movingProgressRemaining -= 1;
   }
 
-  updateSprite(state) {
-    if (this.isPlayerControlled && this.movingProgressRemaining === 0 && !state.arrow) {
-      this.sprite.setAnimation("idle-" + this.direction);
-      return;
-    }
-
+  updateSprite() {
     if (this.movingProgressRemaining > 0) {
       this.sprite.setAnimation("walk-" + this.direction);
+      return;
     }
+    this.sprite.setAnimation("idle-" + this.direction);
   }
 }

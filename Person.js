@@ -2,15 +2,16 @@ class Person extends GameObject {
   constructor(config) {
     super(config);
     this.movingProgressRemaining = 0;
+    this.isStanding = false;
 
     this.isPlayerControlled = config.isPlayerControlled || false;
 
     this.directionUpdate = {
-      "up": ["y", -1],
-      "down": ["y", 1],
-      "left": ["x", -1],
-      "right": ["x", 1]
-    }
+      up: ["y", -1],
+      down: ["y", 1],
+      left: ["x", -1],
+      right: ["x", 1],
+    };
   }
 
   update(state) {
@@ -18,10 +19,14 @@ class Person extends GameObject {
       this.updatePosition();
     } else {
       // More cases
-      if (this.isPlayerControlled && state.arrow) {
+      if (
+        !state.map.isCutscenePlaying &&
+        this.isPlayerControlled &&
+        state.arrow
+      ) {
         this.startBehaviour(state, {
           type: "walk",
-          direction: state.arrow
+          direction: state.arrow,
         });
       }
       this.updateSprite(state);
@@ -30,12 +35,27 @@ class Person extends GameObject {
 
   startBehaviour(state, behaviour) {
     this.direction = behaviour.direction;
-    if (behaviour.type === 'walk') {
+    if (behaviour.type === "walk") {
       if (state.map.isSpaceTaken(this.x, this.y, this.direction)) {
+        behaviour.retry &&
+          setTimeout(() => {
+            this.startBehaviour(state, behaviour);
+          }, 10);
         return;
       }
       state.map.moveWall(this.x, this.y, this.direction);
       this.movingProgressRemaining = 16;
+      this.updateSprite(state);
+    }
+
+    if (behaviour.type === "stand") {
+      this.isStanding = true;
+      setTimeout(() => {
+        utils.emitEvent("PersonStandComplete", {
+          whoId: this.id,
+        });
+        this.isStanding = false;
+      }, behaviour.time);
     }
   }
 
@@ -47,9 +67,8 @@ class Person extends GameObject {
     if (this.movingProgressRemaining === 0) {
       // We finished the walk
       utils.emitEvent("PersonWalkingComplete", {
-        whoId: this.id
-      })
-      document.dispatchEvent(event);
+        whoId: this.id,
+      });
     }
   }
 

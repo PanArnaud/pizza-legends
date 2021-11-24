@@ -6,11 +6,13 @@ class GameObject {
     this.direction = config.direction || "down";
     this.sprite = new Sprite({
       gameObject: this,
-      src: config.src || "/images/characters/people/hero.png"
+      src: config.src || "/images/characters/people/hero.png",
     });
 
     this.behaviourLoop = config.behaviourLoop || [];
     this.behaviourLoopIndex = 0;
+
+    this.talking = config.talking || [];
   }
 
   mount(map) {
@@ -19,24 +21,26 @@ class GameObject {
 
     // If we have a behaviour, kick off after a short delay
     setTimeout(() => {
-      this.doBehaviourEvent(map)
-    }, 10)
+      this.doBehaviourEvent(map);
+    }, 10);
   }
 
-  update() {
-
-  }
+  update() {}
 
   async doBehaviourEvent(map) {
     // Don't do anything if there a more important cutscene or I don't have config to do anything
-    if (map.isCutscenePlaying || this.behaviourLoop.length === 0) {
+    if (
+      map.isCutscenePlaying ||
+      this.behaviourLoop.length === 0 ||
+      this.isStanding
+    ) {
       return;
     }
 
     // Settings up our event with relevant info
     let eventConfig = this.behaviourLoop[this.behaviourLoopIndex];
     eventConfig.who = this.id;
-  
+
     // Create an envent instance out of our next event config
     const eventHandler = new OverworldEvent({ map, event: eventConfig });
     await eventHandler.init();

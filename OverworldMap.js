@@ -1,6 +1,7 @@
 class OverworldMap {
   constructor(config) {
     this.gameObjects = config.gameObjects;
+    this.walls = config.walls || {};
 
     this.lowerImage = new Image();
     this.lowerImage.src = config.lowerSrc;
@@ -24,6 +25,11 @@ class OverworldMap {
       utils.withGrid(6) - cameraPerson.y
     );
   }
+
+  isSpaceTaken(currentX, currentY, direction) {
+    const { x, y } = utils.nextPosition(currentX, currentY, direction); 
+   return this.walls[`${x},${y}`] || false;
+  }
 }
 
 window.OverworldMaps = {
@@ -41,6 +47,12 @@ window.OverworldMaps = {
         y: utils.withGrid(9),
         src: "/images/characters/people/npc1.png"
       })
+    },
+    walls: {
+      [utils.asGridCoords(7, 6)]: true,
+      [utils.asGridCoords(8, 6)]: true,
+      [utils.asGridCoords(7, 7)]: true,
+      [utils.asGridCoords(8, 7)]: true,
     }
   },
   Kitchen: {

@@ -15,5 +15,8 @@ const utils = {
     if (direction === "down") y += size;
 
     return { x, y };
+  }, 
+  emitEvent(name, detail) {
+    const event = new CustomEvent(name, detail);
   }
 }

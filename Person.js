@@ -43,6 +43,14 @@ class Person extends GameObject {
     const [property, change] = this.directionUpdate[this.direction];
     this[property] += change;
     this.movingProgressRemaining -= 1;
+
+    if (this.movingProgressRemaining === 0) {
+      // We finished the walk
+      utils.emitEvent("PersonWalkingComplete", {
+        whoId: this.id
+      })
+      document.dispatchEvent(event);
+    }
   }
 
   updateSprite() {

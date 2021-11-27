@@ -43,7 +43,7 @@ class Battle {
     };
     this.activeCombatants = {
       player: "player1",
-      enemy: "enemy1"
+      enemy: "enemy1",
     };
   }
 
@@ -64,10 +64,22 @@ class Battle {
     this.createElement();
     container.appendChild(this.element);
 
-    Object.keys(this.combatants).forEach(key => {
+    Object.keys(this.combatants).forEach((key) => {
       let combatant = this.combatants[key];
       combatant.id = key;
       combatant.init(this.element);
-    })
+    });
+
+    this.turnCycle = new TurnCycle({
+      battle: this,
+      onNewEvent: (event) => {
+        return new Promise((resolve) => {
+          const battleEvent = new BattleEvent(event, this);
+          battleEvent.init(resolve);
+        });
+      }
+    });
+
+    this.turnCycle.init();
   }
 }

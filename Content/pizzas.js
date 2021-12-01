@@ -13,6 +13,7 @@ window.Pizzas = {
       src: "/images/characters/pizzas/s001.png",
       icon: "/images/icons/spicy.png",
       actions: [
+        "saucyStatus",
         "clumsyStatus",
         "damage1"
       ]

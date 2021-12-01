@@ -38,9 +38,7 @@ class BattleEvent {
   async stateChange(resolve) {
     const { action, caster, target, damage, recover, status } = this.event;
     let who = this.event.onCaster ? caster : target;
-    if (action.targetType === "friendly") {
-      who = caster;
-    }
+
     if (damage) {
       // Modify the target to have less hp
       target.update({

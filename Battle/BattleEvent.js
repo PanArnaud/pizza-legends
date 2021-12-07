@@ -23,9 +23,10 @@ class BattleEvent {
     const menu = new SubmissionMenu({
       caster: this.event.caster,
       enemy: this.event.enemy,
+      items: this.battle.items,
       onComplete: submission => {
         resolve(submission);
-      }
+      },
     });
     menu.init(this.battle.element);
   }
@@ -38,7 +39,6 @@ class BattleEvent {
   async stateChange(resolve) {
     const { action, caster, target, damage, recover, status } = this.event;
     let who = this.event.onCaster ? caster : target;
-
     if (damage) {
       // Modify the target to have less hp
       target.update({
@@ -58,16 +58,15 @@ class BattleEvent {
         hp: newHp
       });
     }
-
     if (status) {
       who.update({
         status: { ...status }
       });
-      if (status === null) {
-        who.update({
-          status: null
-        });
-      }
+    }
+    if (status === null) {
+      who.update({
+        status: null
+      });
     }
     
     // wait a little bit

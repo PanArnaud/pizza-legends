@@ -6,6 +6,7 @@ class TurnCycle {
   }
 
   async turn() {
+    console.log(this.battle.combatants.player1.status)
     // get the caster
     const casterId = this.battle.activeCombatants[this.currentTeam];
     const caster = this.battle.combatants[casterId];
@@ -18,6 +19,10 @@ class TurnCycle {
       caster,
       enemy
     });
+
+    if (submission.instanceId) {
+      this.battle.items = this.battle.items.filter(i => i.instanceId !== submission.instanceId);
+    }
 
     const resultingEvents = caster.getReplacedEvents(submission.action.success);
 

@@ -35,7 +35,7 @@ class BattleEvent {
     menu.init(this.battle.element);
   }
 
-  async replace (resolve) {
+  async replace(resolve) {
     const { replacement } = this.event;
 
     // Clear out the old combatant
@@ -48,6 +48,9 @@ class BattleEvent {
     this.battle.activeCombatants[replacement.team] = replacement.id;
     replacement.update();
     await utils.wait(400);
+
+    this.battle.playerTeam.update();
+    this.battle.enemyTeam.update();
 
     resolve();
   }
@@ -104,6 +107,10 @@ class BattleEvent {
     
     // wait a little bit
     await utils.wait(600);
+
+    // Update team component
+    this.battle.playerTeam.update();
+    this.battle.enemyTeam.update();
     // stop blinking
     target.pizzaElement.classList.remove("battle-damage-blink");
 

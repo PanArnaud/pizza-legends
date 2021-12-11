@@ -15,11 +15,25 @@ class Battle {
         },
         this
       ),
+      player2: new Combatant(
+        {
+          ...Pizzas.s002,
+          team: "player",
+          hp: 30,
+          maxHp: 50,
+          xp: 75,
+          maxXp: 100,
+          level: 1,
+          status: { type: "saucy" },
+          isPlayerControlled: true
+        },
+        this
+      ),
       enemy1: new Combatant(
         {
           ...Pizzas.v001,
           team: "enemy",
-          hp: 50,
+          hp: 1,
           maxHp: 50,
           xp: 2,
           maxXp: 100,

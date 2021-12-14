@@ -1,7 +1,8 @@
 class TurnCycle {
-  constructor({ battle, onNewEvent }) {
+  constructor({ battle, onNewEvent, onWinner }) {
     this.battle = battle;
     this.onNewEvent = onNewEvent;
+    this.onWinner = onWinner;
     this.currentTeam = "player"; // Or "enemy"
   }
 
@@ -34,6 +35,10 @@ class TurnCycle {
     }
 
     if (submission.instanceId) {
+      // Add to list persist to player state later
+      this.battle.usedInstanceIds[submission.instanceId] = true;
+
+      // Removing item from battle state
       this.battle.items = this.battle.items.filter(i => i.instanceId !== submission.instanceId);
     }
 
@@ -57,6 +62,21 @@ class TurnCycle {
         type: "textMessage",
         text: `${submission.target.name} is ruined!`
       });
+
+      if (submission.target.team === "enemy") {
+        const playerActivePizzaId = this.battle.activeCombatants.player;
+        const xp = submission.target.givesXp;
+
+        await this.onNewEvent({
+          type: "textMessage",
+          text: `Gained ${xp} XP!`
+        });
+        await this.onNewEvent({
+          type: "givesXp",
+          xp,
+          combatant: this.battle.combatants[playerActivePizzaId]
+        });
+      }
     }
 
     // Do we have a winning team?
@@ -66,6 +86,7 @@ class TurnCycle {
         type: "textMessage",
         text: "Winner!"
       });
+      this.onWinner(winner);
       return;
     }
 
@@ -127,7 +148,7 @@ class TurnCycle {
   async init() {
     await this.onNewEvent({
       type: "textMessage",
-      text: "The battle is starting!",
+      text: `${this.battle.enemy.name} wants to throw down!`,
     });
 
     // Start the first turn!

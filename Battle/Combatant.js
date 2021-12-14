@@ -3,6 +3,7 @@ class Combatant {
     Object.keys(config).forEach((key) => {
       this[key] = config[key];
     });
+    this.hp = typeof(this.hp) === "undefined" ? this.maxHp : this.hp;
     this.battle = battle;
   }
 
@@ -17,6 +18,10 @@ class Combatant {
 
   get isActive() {
     return this.battle.activeCombatants[this.team] === this.id;
+  }
+
+  get givesXp() {
+    return this.level * 20;
   }
 
   createElement() {
@@ -57,16 +62,20 @@ class Combatant {
   }
 
   update(changes = {}) {
+    // Update anything incoming
     Object.keys(changes).forEach((key) => {
       this[key] = changes[key];
     });
 
+    // Update active flag to show the correct pizza & hud
     this.hudElement.setAttribute("data-active", this.isActive);
     this.pizzaElement.setAttribute("data-active", this.isActive);
 
+    // Update HP & XP percent fills
     this.hpFills.forEach((rect) => (rect.style.width = `${this.hpPercent}%`));
     this.xpFills.forEach((rect) => (rect.style.width = `${this.xpPercent}%`));
 
+    //U pdate level on screen
     this.hudElement.querySelector(".Combatant_level").innerHTML = this.level;
 
     // Update status

@@ -162,6 +162,9 @@ class Battle {
           playerState.items = playerState.items.filter(item => {
             return !this.usedInstanceIds[item.instanceId];
           });
+
+          // Send signal to update
+          utils.emitEvent("PlayerStateUpdated");
         }
         this.element.remove();
         this.onComplete();
